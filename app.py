@@ -41,16 +41,21 @@ def numinfo():
     if not is_key_valid(key):
         return jsonify({"error": "Invalid or expired key"})
 
-    res = requests.get(
-        "https://cyber-osint-num-infos.vercel.app/api/numinfo",
-        params={"num": num, "key": "Anonymous"}
-    )
+    try:
+        res = requests.get(
+            "https://cyber-osint-num-infos.vercel.app/api/numinfo",
+            params={"num": num, "key": "Anonymous"}
+        )
 
-    data = res.json()
+        data = res.json()
 
-    for k in list(data.keys()):
-        if "owner" in k.lower() or "dm" in k.lower():
-            data.pop(k)
+        # remove unwanted fields
+        for k in list(data.keys()):
+            if "owner" in k.lower() or "dm" in k.lower():
+                data.pop(k)
 
-    data["powered_by"] = "Vernex API ⚡"
-    return jsonify(data)
+        data["powered_by"] = "Vernex API ⚡"
+        return jsonify(data)
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
